@@ -5,10 +5,9 @@
 
 import random
 from GameState import GameState
-from consts import INSTRUCTION
 from file_utils import get_unique_filename
-
-DIR_OUTPUT = "data"
+from consts  import *
+from input_utils import input_for_move
 
 
 def play_random_ai():
@@ -20,10 +19,9 @@ def play_random_ai():
     while game_state.is_running:
         print("----")
         if game_state.player == "X":
-            # TODO: loop until we have a valid play.
-            user_input = input("0-8: ")
+            user_move = input_for_move()
             # Convert to a number and update game state.
-            game_state.play(int(user_input))
+            game_state.play(user_move)
             print(game_state)
         elif game_state.player == "O":
             # Make a random valid play.
