@@ -1,9 +1,10 @@
 from pathlib import Path
 from mlx_lm import load, generate
 
+from consts import *
+from file_utils import get_unique_filename 
 from GameState import GameState
-from input_utils import input_for_move
-from consts import * 
+from input_utils import input_for_move, input_review_ai_reponse
 
 
 def play_ai(model_path: Path):
@@ -24,33 +25,40 @@ def play_ai(model_path: Path):
   result = INSTRUCTION +  str(game_state) 
   print(game_state)
 
-  temperatures = [0.0, 0.25, 0.5, 0.75, 1.0, 1.5]
   max_tokens = 25
+  temp = 0
 
   while game_state.is_running:
     print("----")
     if game_state.player == "X":
       user_move = input_for_move()
       game_state.play(user_move)
-      print(game_state)
     elif game_state.player == "O":
-      print("Prompting AI")
-      print("====")
-      print(result)
-      print("====")
+      # Give the AI the entire game log as the prompt.
+      ai_response = generate(model, tokenizer, result, temp, max_tokens)
+      try:
+        # Ask the human to review the AI's response.
+        ai_move = input_review_ai_reponse(ai_response)
+      except ValueError:
+        game_state.is_running = False
+        break
+      # ai_move = get_move_from_llm(ai_response)
 
-      for temp in temperatures:
-          print(f"AI Response at temperature {temp}")
-          print("====")
-          ai_response = generate(model, tokenizer, result, temp, max_tokens)
-          print(ai_response)
-          print("====")
+      # print("Prompting AI")
+      # print("====")
+      # print(result)
+      # print("====")
 
-      # ai_move = get_move_from_llm(ai_input)
+      # print(f"AI Response at temperature {temp}")
+      # print("===="
+      # print(ai_response)
+      # print("====")
+
       # game_state.play(ai_input)
       # print(game_state)
       game_state.is_running = False
     result += str(game_state)
+    print(game_state)
 
   # # The Player moves first, so we need to get the player's move before we can generate the first prompt.
   # user_move = input_for_move()
