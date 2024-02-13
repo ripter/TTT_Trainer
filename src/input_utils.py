@@ -28,13 +28,17 @@ def input_review_ai_reponse(ai_response: str):
   Returns:
     int: The AI's move.
   """
+  error_msg = "Invalid input. Please enter a number between 0 and 8 or -1 for invalid response." 
   print("AI Response:")
   print(ai_response)
   print("Where did the AI move? (-1 for invalid response)")
-  user_response = input_for_move()
-
-  if user_response == -1:
-    print("Invalid AI response. Ending Game.")
-    raise ValueError("Invalid AI response.")
-
-  return user_response
+  while True:
+    try:
+      ai_input = input("0-8: ")
+      ai_move = int(ai_input)
+      if -2 <= ai_move <= 8:  # Check if the number is within the valid range
+        return ai_move
+      else:
+        print(error_msg)
+    except ValueError:
+      print(error_msg)

@@ -33,12 +33,20 @@ def play_ai(model_path: Path):
     if game_state.player == "X":
       user_move = input_for_move()
       game_state.play(user_move)
+      result += str(game_state)
     elif game_state.player == "O":
       # Give the AI the entire game log as the prompt.
       ai_response = generate(model, tokenizer, result, temp, max_tokens)
       try:
         # Ask the human to review the AI's response.
         ai_move = input_review_ai_reponse(ai_response)
+        result += ai_move
+        if ai_move == -1:
+          reason_for_failure = input("How did the AI fail?")
+          result += reason_for_failure
+          game_state.is_running = False
+        else:
+          game_state.play(ai_move)
       except ValueError:
         game_state.is_running = False
         break
@@ -56,8 +64,8 @@ def play_ai(model_path: Path):
 
       # game_state.play(ai_input)
       # print(game_state)
-      game_state.is_running = False
-    result += str(game_state)
+      # game_state.is_running = False
+    # result += str(game_state)
     print(game_state)
 
   # # The Player moves first, so we need to get the player's move before we can generate the first prompt.
