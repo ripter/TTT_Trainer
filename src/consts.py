@@ -8,10 +8,13 @@ DIR_OUTPUT = "data"
 makedirs(DIR_OUTPUT, exist_ok=True)
 
 
-INSTRUCTION = ("3TBot is playing Tic Tak Toe with User.\n"
-    + "3TBot is playing as O. User is playing as X.\n"
+BOT_NAME = "3TBot"
+PLAYER_NAME = "User"
+INSTRUCTION = (f'{BOT_NAME} is playing Tic Tak Toe with {PLAYER_NAME}.\n'
+    + f'{BOT_NAME} is playing as O. {PLAYER_NAME} is playing as X.\n'
     + "Only play when it is your turn.\n"
-    + "Stop playing when someone wins.\n")
-    # + "When it is your turn, make a valid move or declare the winner.\n"
+    + "Update the gameboard with your move.\n"
+    + "Stop playing when someone wins.\n"
+    )
 
 GAME_OVER = ("Game Over\n")

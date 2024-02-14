@@ -31,18 +31,20 @@ def play_ai(model_path: Path):
   while game_state.is_running:
     print("----")
     if game_state.player == "X":
+      # Get the user's move and play it.
       user_move = input_for_move()
       game_state.play(user_move)
       result += str(game_state)
     elif game_state.player == "O":
       # Give the AI the entire game log as the prompt.
       ai_response = generate(model, tokenizer, result, temp, max_tokens)
+      # Ask the human to review the AI's response.
       try:
-        # Ask the human to review the AI's response.
         ai_move = input_review_ai_reponse(ai_response)
         if ai_move == -1:
           reason_for_failure = input("How did the AI fail?")
-          result += "\n" + GAME_OVER + reason_for_failure
+          result += f'{ai_response}\n{GAME_OVER}\n{BOT_NAME} FAILED:\n{reason_for_failure}'
+          # result += ai_response + "\n" + GAME_OVER + f'\n{BOT_NAME} FAILED:\n' + reason_for_failure
           game_state.is_running = False
         else:
           game_state.play(ai_move)
@@ -53,8 +55,9 @@ def play_ai(model_path: Path):
 
     print(game_state)
 
-  print("\n=========\nGame Log:")
+  print("\n=========\nGame Log:\n")
   print(result)
+  return result
 
 
 

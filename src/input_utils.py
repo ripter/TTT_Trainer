@@ -8,7 +8,7 @@ def input_for_move():
   """
   while True:  # Keep asking until a valid input is received
     try:
-      user_input = input("0-8: ")
+      user_input = input("Player Move (0-8): ")
       user_move = int(user_input)
       if -1 <= user_move <= 8:  # Check if the number is within the valid range
         return user_move
@@ -34,7 +34,7 @@ def input_review_ai_reponse(ai_response: str):
   print("Where did the AI move? (-1 for invalid response)")
   while True:
     try:
-      ai_input = input("0-8: ")
+      ai_input = input("AI Move (-1 to 8): ")
       ai_move = int(ai_input)
       if -2 <= ai_move <= 8:  # Check if the number is within the valid range
         return ai_move
