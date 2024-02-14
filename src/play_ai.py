@@ -7,7 +7,7 @@ from GameState import GameState
 from input_utils import input_for_move, input_review_ai_reponse
 
 
-def play_ai(model_path: Path):
+def play_ai(model_path: Path, LoRA_path: Path = None):
   """
   Play's the model AI aganist a human player.
   The AI is trained to play as the "O" player.
@@ -20,7 +20,7 @@ def play_ai(model_path: Path):
     FileNotFoundError: If the weight files (.safetensors) are not found.
     str: The game log.
   """
-  model, tokenizer = load(model_path)
+  model, tokenizer = load(model_path, adapter_file=LoRA_path)
   game_state = GameState()
   result = INSTRUCTION +  str(game_state) 
   print(game_state)
