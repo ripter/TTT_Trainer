@@ -44,7 +44,6 @@ def play_ai(model_path: Path):
         if ai_move == -1:
           reason_for_failure = input("How did the AI fail?")
           result += f'{ai_response}\n{GAME_OVER}\n{BOT_NAME} FAILED:\n{reason_for_failure}'
-          # result += ai_response + "\n" + GAME_OVER + f'\n{BOT_NAME} FAILED:\n' + reason_for_failure
           game_state.is_running = False
         else:
           game_state.play(ai_move)
