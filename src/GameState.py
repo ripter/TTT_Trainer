@@ -61,7 +61,11 @@ class GameState:
     def _str_status(self):
         winner = self.get_winner()
         if winner is None:
-            return f'\n Next Play: {self.player} \n'
+            return (
+                '\n' +
+                f'Next Play: {self.player} \n' +
+                f'Last Play: {self.grid[-1]} \n'
+            )
         return f'\n Winner: {winner} \n'
         
 
