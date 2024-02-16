@@ -1,3 +1,5 @@
+import json
+
 def value_to_str(value):
     if value is None:
         return " "
@@ -23,15 +25,16 @@ class GameState:
             self.is_running = False
 
         if self.has_open_moves() is False:
+            self.error_message = "The game is a draw."
             self.is_running = False
 
 
     def play(self, move):
         if move < 0 or move > 8:
-            self.error_message = f'{self.player} played an invalid move location. "{move}"  \n'
+            self.error_message = f'{self.player} played an invalid move location. "{move}"'
             return
-        if not self.can_place_move(move):
-            self.error_message = f'{self.player} attempted to move into occupied space at position {move}  \n'
+        if not self.can_move_at(move):
+            self.error_message = f'{self.player} attempted to move into occupied space at position {move}'
             return
 
         self.grid[move] = self.player # Update State
@@ -59,30 +62,34 @@ class GameState:
         return None
     
 
-    def can_place_move(self, move):
+    def can_move_at(self, move):
+        """Return True if the move is valid."""
         return self.grid[move] is None
 
 
     def has_open_moves(self):
-        # Return true if there is an open space in the grid.
+        """Return True if there is an open space in the grid."""
         return any([x is None for x in self.grid])
 
     
     def __str__(self):
+        """Return a string representation of the game state."""
         return (
             self._str_status() + 
             self._str_grid() +
-            self.error_message
+            f'\n{self.error_message}'
         )
 
     
     def _str_grid(self):
+        """Return a string representation of the game grid."""
         return (" " + value_to_str(self.grid[0]) + " | " + value_to_str(self.grid[1]) + " | " + value_to_str(self.grid[2]) + " \n" 
             + " " + value_to_str(self.grid[3]) + " | " + value_to_str(self.grid[4]) + " | " + value_to_str(self.grid[5]) + " \n"
             + " " + value_to_str(self.grid[6]) + " | " + value_to_str(self.grid[7]) + " | " + value_to_str(self.grid[8]) + " \n"
         )
         
     def _str_status(self):
+        """Return a string representation of the game status."""
         winner = self.get_winner()
         if winner is None:
             return (
@@ -98,7 +105,8 @@ class GameState:
         
 
     def to_json(self):
-        return {
+        """Return a JSON representation of the game state."""
+        return json.dumps({
             "player": self.player,
             "lastMove": self.last_move,
             "errorMessage": self.error_message,
@@ -108,5 +116,5 @@ class GameState:
                 [self.grid[3], self.grid[4], self.grid[5]],
                 [self.grid[6], self.grid[7], self.grid[8]],
             ],
-        }
+        })
     

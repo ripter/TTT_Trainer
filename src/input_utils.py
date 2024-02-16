@@ -1,21 +1,25 @@
 
 def input_for_move():
   """
-  Get input from the user for a move.
+  Get input from the user for a move or a forfeit.
 
   Returns:
-    int: The move the user wants to make.
+    tuple: (bool, int or str) A tuple where the first element indicates whether the operation was successful,
+            and the second element is either the move as an integer or an error/forfeit message.
   """
-  while True:  # Keep asking until a valid input is received
+  while True:
+    user_input = input("Player Move (0-8) or 'f' to forfeit: ")
+    if user_input.lower() == 'f':
+      return (False, "The player has decided to forfeit the game.")
     try:
-      user_input = input("Player Move (0-8): ")
       user_move = int(user_input)
-      if -1 <= user_move <= 8:  # Check if the number is within the valid range
-        return user_move
+      if 0 <= user_move <= 8:
+        return (True, user_move)
       else:
-        print("Invalid input. Please enter a number between 0 and 8.")
+        print("Invalid input. Please enter a number between 0 and 8, or 'f' to forfeit.")
     except ValueError:
-      print("Invalid input. Please enter a number between 0 and 8.")
+        print("Invalid input. Please enter a number between 0 and 8, or 'f' to forfeit.")
+
 
 
 def input_review_ai_reponse(ai_response: str):
