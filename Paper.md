@@ -50,17 +50,27 @@ The augmented model, with the inclusion of LoRA, experiences challenges when the
 
 At this juncture, I'm confronted with a pivotal choice: delve into quantifying the data needed for the model to proficiently play TicTacToe, or refine the prompt structure to enable the GameState class to autonomously interpret the ML model's responses, thus eliminating the need for manual intervention. My decision branches into exploring both avenues, albeit with a primary emphasis on refining the interaction between the GameState mechanism and the ML model.
 
-The initial step in this process involves revisiting the prompt format. Currently, the GameState encapsulates two essential pieces of information: which player's turn it is and the visual representation of the gameboard. To facilitate a more intuitive understanding by the GameState of the ML's responses, an additional datum is introduced: the position where the last player placed their mark. This modification will allow the GameState to read the ML's move, and validate that the move is valid.
+The initial step in this process involves revisiting the prompt format. Currently, the GameState encapsulates two essential pieces of information: which player's turn it is and the visual representation of the gameboard. To facilitate a more intuitive understanding by the GameState of the ML's responses, an additional datum is introduced: the position where the last player placed their mark. This modification will allow the GameState to read the ML's move, and validate that the move is valid. I also Added an optional error message to let the user know why the game state did not change.
 
 ```
-Last Play: X, 4
 Next Play: O 
-  O |   |   
-  X | X  |   
-   |   | 
+Last Play: X, 4 
+   |   |   
+   | X |   
+   |   |   
+Error message displayed here
 ```
 
 To support this new format, the GameState class will need to be able to read back the string representation it generates. It needs to pull state from the first two lines and then compare it's internal board state with the string version provided.
+
+
+### Training
+
+The Phase 1 data was heavly biased to a X player trying to win. So this time I am going to focus on prividing an equal number of examples for the three ending states, X wins, O Wins, and tie. I'm not sure if I should provide examples of the error state or not. For now I will not. Later I can create those test cases and compare the result to this one, allowing me to calculate the effect of the error states in training data.
+
+
+
+
 
 
 
