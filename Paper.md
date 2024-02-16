@@ -64,14 +64,28 @@ Error message displayed here
 To support this new format, the GameState class will need to be able to read back the string representation it generates. It needs to pull state from the first two lines and then compare it's internal board state with the string version provided.
 
 
-### Training
+### Training Data
 
-The Phase 1 data was heavly biased to a X player trying to win. So this time I am going to focus on prividing an equal number of examples for the three ending states, X wins, O Wins, and tie. I'm not sure if I should provide examples of the error state or not. For now I will not. Later I can create those test cases and compare the result to this one, allowing me to calculate the effect of the error states in training data.
+In the Phase 1 dataset, X always attempted to win the game. But when the ML played ad O, it would mark a random space. If X made a mistake, the ML would try to "correct" the gameboard and move the X position. To correct this imbalance and broaden the model's learning experience, I have revised the dataset for the subsequent training phase. The objective is to evenly cover all typical outcomes of a TicTacToe game: victories by 'X', victories by 'O', ties, and forfeits.
 
-* X Wins: 2
-* O Wins: 1
-* Tie: 0
-* Forfiet: 0
+The composition of the 24 game logs is now adjusted to:
+
+  *  X Wins: 9
+   * O Wins: 4
+   * Tie: 7
+   * Forfeit: 4
+
+By increasing the variatiey of training data, I hope to improve it's ability to play the game without increasing the amount of training data. I generated the test cases with the `play_human_vs_human.py` script. I found it suprisingly difficult to let O win. The only way O can win, is if X makes a mistake. As long as X plays perfectly, the best O can do is Tie the game.
+
+
+### Formatting the Data
+
+Once I had 24 game log files, I needed to convert them into the format explected by the training script. I am using the `mlx_lm.lora` script provided by Apple and it expects the data to be in three `.jsonl` files. `train.jsonl`, `valid.jsonl`, and `test.jsonl`. 
+
+I created a python script to perform this transformation.
+
+
+
 
 
 

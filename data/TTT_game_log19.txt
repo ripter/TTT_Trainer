@@ -1,0 +1,76 @@
+3TBot is playing Tic Tak Toe with User.
+3TBot is playing as O. User is playing as X.
+Only play when it is your turn.
+Update the gameboard with your move.
+Stop playing when someone wins.
+
+Next Play: X 
+Last Play: None, None 
+   |   |   
+   |   |   
+   |   |   
+
+
+Next Play: O 
+Last Play: X, 4 
+   |   |   
+   | X |   
+   |   |   
+
+
+Next Play: X 
+Last Play: O, 0 
+ O |   |   
+   | X |   
+   |   |   
+
+
+Next Play: O 
+Last Play: X, 2 
+ O |   | X 
+   | X |   
+   |   |   
+
+
+Next Play: X 
+Last Play: O, 6 
+ O |   | X 
+   | X |   
+ O |   |   
+
+
+Next Play: O 
+Last Play: X, 3 
+ O |   | X 
+ X | X |   
+ O |   |   
+
+
+Next Play: X 
+Last Play: O, 5 
+ O |   | X 
+ X | X | O 
+ O |   |   
+
+
+Next Play: O 
+Last Play: X, 7 
+ O |   | X 
+ X | X | O 
+ O | X |   
+
+
+Next Play: X 
+Last Play: O, 1 
+ O | O | X 
+ X | X | O 
+ O | X |   
+
+
+The game is a draw. 
+Last Play: X, 8 
+ O | O | X 
+ X | X | O 
+ O | X | X 
+
+The game is a draw.

@@ -10,7 +10,7 @@ makedirs(DIR_OUTPUT, exist_ok=True)
 
 BOT_NAME = "3TBot"
 PLAYER_NAME = "User"
-INSTRUCTION = (f'{BOT_NAME} is playing Tic Tak Toe with {PLAYER_NAME}.\n'
+INSTRUCTION = (f'{BOT_NAME} is playing TicTacToe with {PLAYER_NAME}.\n'
     + f'{BOT_NAME} is playing as O. {PLAYER_NAME} is playing as X.\n'
     + "Only play when it is your turn.\n"
     + "Update the gameboard with your move.\n"
