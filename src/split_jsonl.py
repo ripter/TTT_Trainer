@@ -3,6 +3,8 @@ import random
 import argparse
 import os
 
+from consts import DIR_OUTPUT
+
 def split_jsonl(file_path, out_path, train_ratio=0.7, valid_ratio=0.15):
     """
     Splits a JSONL file into training, validation, and testing files.
@@ -50,7 +52,7 @@ if __name__ == "__main__":
     # Set up argument parsing
     parser = argparse.ArgumentParser(description='Split a JSONL file into train, validation, and test sets.')
     parser.add_argument("file_path", type=str, help='Path to the .jsonl file to be split.')
-    parser.add_argument("--data_dir", type=str, default="./", help='Path to the directory to save the split files.')
+    parser.add_argument("--data_dir", type=str, default=DIR_OUTPUT, help='Path to the directory to save the split files.')
     parser.add_argument("--train_ratio", type=float, default=0.7, help='Fraction of data to use for training (default: 0.7).')
     parser.add_argument("--valid_ratio", type=float, default=0.15, help='Fraction of data to use for validation (default: 0.15).')
 

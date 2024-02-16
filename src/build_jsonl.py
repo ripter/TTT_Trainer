@@ -2,7 +2,8 @@ import json
 import argparse
 from glob import glob
 from os import path
-from src.consts import DIR_OUTPUT
+
+from consts import DIR_OUTPUT
 
 def process_files(file_prefix):
     # Construct the file pattern
@@ -30,6 +31,7 @@ if __name__ == "__main__":
     # Set up argument parsing
     parser = argparse.ArgumentParser(description='Process text files by prefix and generate a .jsonl file.')
     parser.add_argument('file_prefix', type=str, help='Prefix of the files to process.')
+    parser.add_argument("--data_dir", type=str, default=DIR_OUTPUT, help='Path to the directory to save the split files.')
 
     # Parse arguments
     args = parser.parse_args()

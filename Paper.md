@@ -84,7 +84,25 @@ Once I had 24 game log files, I needed to convert them into the format explected
 
 I created a python script to perform this transformation.
 
+```sh
+python src/build_jsonl.py TTT_game_log  
+python src/split_jsonl.py data/all_TTT_game_log.jsonl 
+```
 
+Then I can use the provided script to create the LoRA.
+
+```sh
+python -m mlx_lm.lora \                                                                                                                                                                                    
+              --model models/Mistral-7B-v0.1/ \
+              --train \
+              --data data/ \
+              --iters 600
+```
+
+This took me about 92GB of ram to run and took  44.92 min.
+
+
+### Testing the result
 
 
 
