@@ -10,40 +10,52 @@ Last Play: None, None
    |   |   
    |   |   
 
-Next Play: O 
-Last Play: X, 4 
-   |   |   
-   | X |   
-   |   |   
-
-Next Play: X 
-Last Play: O, 0 
- O |   |   
-   | X |   
-   |   |   
 
 Next Play: O 
-Last Play: X, 5 
- O |   |   
-   | X | X 
+Last Play: X, 0 
+ X |   |   
    |   |   
+   |   |   
+
 
 Next Play: X 
 Last Play: O, 3 
+ X |   |   
  O |   |   
- O | X | X 
    |   |   
 
-Next Play: O 
-Last Play: X, 6 
- O |   |   
- O | X | X 
- X |   |   
 
 Next Play: O 
-Last Play: X, 6 
- O |   |   
- O | X | X 
+Last Play: X, 4 
  X |   |   
+ O | X |   
+   |   |   
 
-Player has decided to forfeit the game.
+
+Next Play: X 
+Last Play: O, 8 
+ X |   |   
+ O | X |   
+   |   | O 
+
+
+Next Play: O 
+Last Play: X, 2 
+ X |   | X 
+ O | X |   
+   |   | O 
+
+
+Next Play: X 
+Last Play: O, 1 
+ X | O | X 
+ O | X |   
+   |   | O 
+
+
+Winner: X 
+Last Play: X, 6 
+ X | O | X 
+ O | X |   
+ X |   | O 
+

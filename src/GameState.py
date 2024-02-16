@@ -91,17 +91,19 @@ class GameState:
     def _str_status(self):
         """Return a string representation of the game status."""
         winner = self.get_winner()
-        if winner is None:
-            return (
-                '\n' +
-                f'Next Play: {self.player} \n' +
-                f'Last Play: {self.last_move[0]}, {self.last_move[1]} \n'
-            )
-        return (
-            '\n' +
-            f'Winner: {winner} \n' +
-            f'Last Play: {self.last_move[0]}, {self.last_move[1]} \n'
-        )
+        message = "\n"
+
+        if self.is_running:
+            message += f'Next Play: {self.player} \n'
+
+        if winner is not None:
+            message += f'Winner: {winner} \n'
+        elif self.has_open_moves() is False:
+            message += "The game is a draw. \n"
+
+        message += f'Last Play: {self.last_move[0]}, {self.last_move[1]} \n'
+        
+        return message
         
 
     def to_json(self):

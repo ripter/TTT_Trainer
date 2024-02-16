@@ -68,10 +68,10 @@ To support this new format, the GameState class will need to be able to read bac
 
 The Phase 1 data was heavly biased to a X player trying to win. So this time I am going to focus on prividing an equal number of examples for the three ending states, X wins, O Wins, and tie. I'm not sure if I should provide examples of the error state or not. For now I will not. Later I can create those test cases and compare the result to this one, allowing me to calculate the effect of the error states in training data.
 
-* X Wins: 0
+* X Wins: 2
 * O Wins: 1
 * Tie: 0
-* Forfiet: 1
+* Forfiet: 0
 
 
 
