@@ -104,7 +104,13 @@ This took me about 92GB of ram to run and took  44.92 min.
 
 ### Testing the result
 
+First question, Does the ML properly update the "Last Play" line? Mostly.
 
+* Game 1, The ML missed an obvious move to block the player.
+* Game 2, The ML successfully blocked the player on the middle row. By move 9, the ML claimed to place a mark at position 8, but it does not. The user flags the game as an AI failure.
+* Game 3, The ML failed to take advantage of a winning move on the first column.
+* Game 4, The ML failed to take advantage of a winning move on the last column. The ML claims to have placed it's mark at in invalid index.
+* 
 
 
 

@@ -46,3 +46,55 @@ def input_review_ai_reponse(ai_response: str):
         print(error_msg)
     except ValueError:
       print(error_msg)
+
+
+
+
+def parse_last_play(input_string):
+  # Step 1 & 2: Split on the colon to separate the description from the values, then strip whitespace
+  value_part = input_string.split(':')[1].strip()
+
+  # Step 3: Split on the comma to separate the player and position
+  value_parts = value_part.split(',')
+
+  # Step 4: Strip whitespace from each part and prepare the values
+  player = value_parts[0].strip()
+  position = value_parts[1].strip()
+
+  # Step 5: Convert position to an integer
+  try:
+    position = int(position)
+  except ValueError:
+    # If the position is not an integer, return None
+    position = None
+
+  # Return as a tuple
+  return (player, position)
+
+
+
+def convert_ai_response_to_move(ai_response: str):
+  """
+  Convert the AI's response to a move.
+
+  Args:
+    ai_response (str): The AI's response.
+
+  Returns:
+    tuple: (bool, int or str) A tuple where the first element indicates whether the operation was successful,
+            and the second element is either the move as an integer or an error/forfeit message.
+  """
+  ai_response_list = ai_response.split("\n") #[-2].split(" ")[-1]
+  [(marker, ai_move)] = [parse_last_play(line) for line in ai_response_list if line.strip().startswith("Last Play:")]
+
+  if ai_move is None:
+    return (False, "The AI's response was invalid.")
+
+  if marker == "O":
+    if 0 <= ai_move <= 8:
+      return (True, ai_move)
+    else:
+      return (False, "The ML response was outside the range of 0-8.")
+
+  return (False, "The ML response was not for the 'O' player.")
+

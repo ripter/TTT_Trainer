@@ -4,7 +4,7 @@ from mlx_lm import load, generate
 from consts import *
 from file_utils import get_unique_filename 
 from GameState import GameState
-from input_utils import input_for_move, input_review_ai_reponse
+from input_utils import input_for_move, input_review_ai_reponse, convert_ai_response_to_move
 
 
 def play_ai(model_path: Path, LoRA_path: Path = None):
@@ -25,32 +25,32 @@ def play_ai(model_path: Path, LoRA_path: Path = None):
   result = INSTRUCTION +  str(game_state) 
   print(game_state)
 
-  max_tokens = 25
+  max_tokens = 35
   temp = 0
 
   while game_state.is_running:
     print("----")
     if game_state.player == "X":
       # Get the user's move and play it.
-      user_move = input_for_move()
+      (was_successful, user_move) = input_for_move()
+      if not was_successful:
+        game_state.error_message = user_move
+        game_state.is_running = False
+        break
+
       game_state.play(user_move)
       result += str(game_state)
     elif game_state.player == "O":
       # Give the AI the entire game log as the prompt.
       ai_response = generate(model, tokenizer, result, temp, max_tokens)
-      # Ask the human to review the AI's response.
-      try:
-        ai_move = input_review_ai_reponse(ai_response)
-        if ai_move == -1:
-          reason_for_failure = input("How did the AI fail?")
-          result += f'{ai_response}\n{GAME_OVER}\n{BOT_NAME} FAILED:\n{reason_for_failure}'
-          game_state.is_running = False
-        else:
-          game_state.play(ai_move)
-          result += str(game_state)
-      except ValueError:
+      (was_successful, ai_move) = convert_ai_response_to_move(ai_response)
+
+      if not was_successful:
+        game_state.error_message = ai_move
         game_state.is_running = False
         break
+      game_state.play(ai_move)
+      result += str(game_state)
 
     print(game_state)
 
