@@ -32,24 +32,18 @@ def play_ai(model_path: Path, LoRA_path: Path = None):
     print("----")
     if game_state.player == "X":
       # Get the user's move and play it.
-      (was_successful, user_move) = input_for_move()
-      if not was_successful:
-        game_state.error_message = user_move
-        game_state.is_running = False
-        break
-
-      game_state.play(user_move)
-      result += str(game_state)
+      (was_successful, move_pos) = input_for_move()
     elif game_state.player == "O":
       # Give the AI the entire game log as the prompt.
       ai_response = generate(model, tokenizer, result, temp, max_tokens)
-      (was_successful, ai_move) = convert_ai_response_to_move(ai_response)
+      (was_successful, move_pos) = convert_ai_response_to_move(ai_response)
 
-      if not was_successful:
-        game_state.error_message = ai_move
-        game_state.is_running = False
-        break
-      game_state.play(ai_move)
+    if not was_successful:
+      game_state.error_message = move_pos
+      game_state.is_running = False
+      break
+    else:
+      game_state.play(move_pos)
       result += str(game_state)
 
     print(game_state)
