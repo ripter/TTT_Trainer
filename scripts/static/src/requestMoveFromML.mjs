@@ -1,6 +1,7 @@
 import { llama } from '../libs/llamacpp.mjs';
 
-export async function requestMoveFromML(baseUrl, prompt) {
+export async function requestMoveFromML(prompt) {
+  const baseUrl = '/proxy';
   console.log('Requesting ML Move');
   // let responseText = '';
   // const request = llama(prompt, { n_predict: 800 }, { baseURL: baseUrl })
@@ -14,10 +15,10 @@ export async function requestMoveFromML(baseUrl, prompt) {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer abc123',
-      'Sec-Fetch-Dest': 'empty',
-      'Sec-Fetch-Mode': 'cors',
-      'Sec-Fetch-Site': 'cross-site',
+      // 'Authorization': 'Bearer abc123',
+      // 'Sec-Fetch-Dest': 'empty',
+      // 'Sec-Fetch-Mode': 'cors',
+      // 'Sec-Fetch-Site': 'cross-site',
       // 'Access-Control-Allow-Origin': 'http://localhost:4400/',
       // 'Access-Control-Allow-Origin': '*',
     },

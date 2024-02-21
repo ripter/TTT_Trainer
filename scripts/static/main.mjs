@@ -95,8 +95,7 @@ class App extends HTMLElement {
     this.renderStateWaiting();
     // this.respondAsAsync(idx);
     // this.requestMLMove();
-    const baseUrl = document.getElementById('config-url').value;
-    const mlResponse = await requestMoveFromML(baseUrl, this.gameLog);
+    const mlResponse = await requestMoveFromML(this.gameLog);
     console.log('mlResponse', mlResponse);
   }
   
