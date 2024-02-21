@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>TicTacToe Interface</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <app-ttt-game>
+3TBot is playing TicTacToe with User. <br />
+3TBot is playing as O. User is playing as X. <br />
+Only play when it is your turn. <br />
+Update the gameboard with your move. <br />
+Stop playing when someone wins.
+  </app-ttt-game>
+
+  <div id="config">
+    <label>
+      <input type="text" id="config-url" value="http://localhost:8080" />
+    </label>
+  </div>
+
+  <script type="module" src="./script.mjs"></script>
+</body>
+</html>

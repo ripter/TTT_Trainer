@@ -1,0 +1,87 @@
+app-ttt-game {
+  --cell-font-size: 56px;
+  --cell-size: var(--cell-font-size);
+  --mark-font-family: fantasy;
+}
+
+app-ttt-game .gameboard {
+  display: grid;
+  grid-template-rows: repeat(3, var(--cell-size));
+  grid-template-columns: repeat(3, var(--cell-size));
+  position: relative;
+  overflow: hidden;
+  width: calc(var(--cell-size) * 3);
+  height: calc(var(--cell-size) * 3);
+}
+
+app-ttt-game .gameboard .cell {
+  border: thin solid #DDD;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  font-size: var(--cell-font-size);
+  font-family: var(--mark-font-family);
+}
+
+app-ttt-game .gameboard .banner {
+  font-size: calc(var(--cell-font-size) * 0.5);
+  padding: 0.25em;
+  position: absolute;
+  background-color: rgba(0,0,0,0.5); /* Semi-transparent overlay */
+  color: white;
+  z-index: 2;
+  width: 100%;
+  top: 25%;
+}
+
+app-ttt-game .player-label {
+  font-family: var(--mark-font-family);
+}
+
+app-ttt-game .game-log {
+  border: thin solid #ddd;
+  overflow: scroll;
+  margin: 0;
+  padding: 0.5em;
+}
+
+
+/* Use Grid to Position everything nicely */
+app-ttt-game {
+  display: grid;
+  grid-template-rows: var(--cell-size) calc(var(--cell-size) * 3);
+}
+app-ttt-game >h2 {
+  grid-column: 1;
+  grid-row: 1;
+}
+app-ttt-game .gameboard {
+  grid-column: 1;
+  gird-row: 2;
+}
+app-ttt-game .game-log {
+  grid-row: 1 / 3;
+  grid-column: 2;
+}
+
+/* Position the content in the center */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0; /* A light background to contrast the display component */
+  font-family: Arial, sans-serif; /* Optional: improves typography */
+  flex-direction: column;
+}
+
+body > * {
+  width: 30em;
+  padding: 20px;
+  margin: auto; /* Centers the component vertically and horizontally */
+  background-color: #ffffff; /* A contrasting background for the content */
+  border: 1px solid #ccc; /* A subtle border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* A soft shadow for depth */
+  border-radius: 8px; /* Rounded corners for a modern look */
+}
