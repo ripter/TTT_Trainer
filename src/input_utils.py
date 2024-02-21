@@ -84,7 +84,8 @@ def convert_ai_response_to_move(ai_response: str):
     tuple: (bool, int or str) A tuple where the first element indicates whether the operation was successful,
             and the second element is either the move as an integer or an error/forfeit message.
   """
-  ai_response_list = ai_response.split("\n") #[-2].split(" ")[-1]
+  ai_response_list = ai_response.split("\n") # Split the response into lines
+  # Find the line that contains the last play
   [(marker, ai_move)] = [parse_last_play(line) for line in ai_response_list if line.strip().startswith("Last Play:")]
 
   if ai_move is None:
