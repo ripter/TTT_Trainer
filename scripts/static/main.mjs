@@ -91,12 +91,17 @@ class App extends HTMLElement {
     // Play the move
     this.play(this.currentPlayer, idx);
 
-    // For Demo, simulate a response
+    // Show waiting while we wait for the response.
     this.renderStateWaiting();
-    // this.respondAsAsync(idx);
-    // this.requestMLMove();
     const mlResponse = await requestMoveFromML(this.gameLog);
-    console.log('mlResponse', mlResponse);
+    // Trigger the ML response as an event.
+    // Did we need to respond as an event? No. But it's fun and still async.
+    const moveEvent = new CustomEvent('submit-move', {
+      detail: {
+        value: mlResponse,
+      }
+    });
+    this.dispatchEvent(moveEvent);
   }
   
   /* API to play a move */
@@ -105,6 +110,9 @@ class App extends HTMLElement {
     const lines = value.split('\n');
     const lineLastPlay = lines.filter(line => line.startsWith("Last Play:"));
     if (lineLastPlay.length !== 1) {
+      if (lineLastPlay.length > 1) {
+        return this.logError(`Invalid Response. Response containted more than one move.`, value);
+      }
       return this.logError(`Invalid Response. No "Last Play:"`, value);
     }
     const lastPlay = lineLastPlay[0].split(':')[1].split(',');
