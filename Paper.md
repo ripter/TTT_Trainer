@@ -143,6 +143,8 @@ The testing phase demonstrated that the player could engage in multiple interact
 
 ## Phase 3: Improved UI & Spot Training
 
+I created a webUI for the game that allows playing a model hosted by [llama.cpp's server](https://github.com/ggerganov/llama.cpp/tree/master/examples/server). The UI allows the user to play 
+
 
 ```
 Next Play: O

@@ -83,16 +83,20 @@ class App extends HTMLElement {
   
   /* Click to play a move */
   async handleClick(evt) {
+    // Bail if we are waiting for a response.
+    if (this._waiting) { return; }
     const { target } = evt;
     // bail if the click was not on a cell.
     if (!target.classList.contains('cell')) { return; }
+
     // get the cell index.
     const idx = parseFloat(target.dataset.idx);
     // Play the move
     this.play(this.currentPlayer, idx);
 
     // Show waiting while we wait for the response.
-    this.renderStateWaiting();
+    this._waiting = true;
+    this.renderStateWaiting(); // TODO: this should use _waiting to show the banner.
     const mlResponse = await requestMoveFromML(this.gameLog);
     // Trigger the ML response as an event.
     // Did we need to respond as an event? No. But it's fun and still async.
@@ -102,16 +106,18 @@ class App extends HTMLElement {
       }
     });
     this.dispatchEvent(moveEvent);
+    // All done!
+    this._waiting = false;
   }
   
   /* API to play a move */
   handleSubmitMove(evt) {
     const { value = '' } = evt.detail;
     const lines = value.split('\n');
-    const lineLastPlay = lines.filter(line => line.startsWith("Last Play:"));
+    const lineLastPlay = lines.filter(line => line.toLowerCase().startsWith("last play:"));
     if (lineLastPlay.length !== 1) {
       if (lineLastPlay.length > 1) {
-        return this.logError(`Invalid Response. Response containted more than one move.`, value);
+        return this.logError(`Invalid Response.\nResponse containted more than one move.`, value);
       }
       return this.logError(`Invalid Response. No "Last Play:"`, value);
     }
