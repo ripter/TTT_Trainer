@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, redirect, Response, jsonify
+from flask import Flask, request, send_from_directory, redirect
 import requests
 import argparse
 import os
@@ -24,81 +24,16 @@ if not os.path.exists(static_folder_path):
 
 app = Flask(__name__)
 
+
 @app.route('/api/health', methods=['GET'])
 def get_health():
     response = requests.get(f'{args.external_api}/health')
     return (response.content, response.status_code, response.headers.items())
 
-
 @app.route('/api/completion', methods=['POST'])
 def post_completion():
     response = requests.post(f'{args.external_api}/completion', json=request.json)
     return (response.content, response.status_code, response.headers.items())
-
-# @app.route('/proxy/<path:endpoint>', methods=['GET', 'POST'])
-# def proxy_request(endpoint):
-#     print(f'Proxying request to {args.external_api}{endpoint}\nrequest.args: {request.args}\nrequest.json: {request.json}')
-#     if request.method == 'GET':
-#         response = requests.get(args.external_api, params=request.args)
-#     elif request.method == 'POST':
-#         response = requests.post(args.external_api, json=request.json)
-#     return (response.content, response.status_code, response.headers.items())
-
-# @app.route('/proxy/<path:endpoint>', methods=['GET', 'POST'])
-# def proxy_request(endpoint):
-#     # Construct the full URL by appending the endpoint to the base external API URL
-#     url = f"{args.external_api}/{endpoint}"
-#     print(f'Proxying request to {url}\nrequest.args: {request.args}\nrequest.json: {request.json}')
-    
-#     headers = {}
-#     # Pass along the headers from the original request, if present
-#     headers.update(request.headers)
-
-#     # Include more headers as needed, especially if the API requires specific headers to be set.
-#     # For example, forwarding the Content-Type header for POST requests:
-#     # if 'Content-Type' in request.headers:
-#     #     headers['Content-Type'] = request.headers['Content-Type']
-    
-#     try:
-#         if request.method == 'GET':
-#             response = requests.get(url, params=request.args, headers=headers)
-#         elif request.method == 'POST':
-#             # Ensure the JSON body is forwarded correctly.
-#             response = requests.post(url, json=request.json, headers=headers)
-#     except requests.exceptions.RequestException as e:
-#         print(f"Request failed: {e}")
-#         return Response("Failed to proxy request", status=502)  # Bad Gateway to indicate upstream failure
-
-#     # Forward the response content, status code, and headers back to the client
-#     return Response(response.content, status=response.status_code, headers=dict(response.headers))
-
-# @app.route('/proxy/<path:endpoint>', methods=['GET', 'POST'])
-# def proxy_request(endpoint):
-#     url = f"{args.external_api}/{endpoint}"
-#     print(f'Proxying request to {url}\nrequest.args: {request.args}\nrequest.json: {request.json}')
-#     return f'Proxying request to {url}\nrequest.args: {request.args}\nrequest.json: {request.json}', 200
-
-#     # Prepare headers for the proxied request
-#     headers_to_forward = {'Accept': request.headers.get('Accept')}
-#     headers_to_forward['Content-Type'] = request.headers.get('Content-Type')
-#     # if request.method == 'POST' and 'Content-Type' in request.headers:
-#     #     headers_to_forward['Content-Type'] = request.headers.get('Content-Type')
-
-#     try:
-#         if request.method == 'GET':
-#             response = requests.get(url, params=request.args, headers=headers_to_forward)
-#         elif request.method == 'POST':
-#             # Assuming you want to forward a JSON body if present
-#             data = request.json if request.is_json else {}
-#             response = requests.post(url, json=data, headers=headers_to_forward)
-#     except requests.exceptions.RequestException as e:
-#         print(f"Request failed: {e}")
-#         return Response("Failed to proxy request", status=502)  # Use 502 Bad Gateway to indicate an upstream error
-
-#     # Forward the proxied response back to the client
-#     return Response(response.content, status=response.status_code, headers=dict(response.headers))
-
-
 
 
 @app.route('/<path:path>')

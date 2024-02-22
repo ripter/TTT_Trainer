@@ -7,6 +7,7 @@ export async function requestMoveFromML(prompt) {
     },
     body: JSON.stringify({ 
       prompt: prompt,
+      n_keep: 35,
     }),
   });
   const data = await response.json();
