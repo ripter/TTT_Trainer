@@ -140,6 +140,7 @@ A series of ten games were conducted to evaluate the model's gameplay intelligen
 The testing phase demonstrated that the player could engage in multiple interactive games with the ML model. The model's updated interaction format significantly enhanced the user interface's (UI) capability to interpret the ML's responses and validate their accuracy. Although the ML model remains relatively easy to defeat, its performance in executing valid moves and engaging in the gameplay has notably improved. This advancement suggests a positive direction in the model's learning curve, indicating its potential for further refinement and sophistication in strategic gameplay.
 
 
+---
 
 ## Phase 3: Improved UI & Spot Training
 
@@ -155,7 +156,29 @@ python webUI/server.py
 
 Before I can use a tool like [llama.cpp](https://github.com/ggerganov/llama.cpp) to host and run my custom model. I need to convert my model from `.safetensors` and `.nbz` files into a `.gguf` file.
 
- 
+```
+cd llama.cpp
+source venv/bin/activate.fish
+python -m pip install -r requirements.txt
+python convert.py ../TTT_Trainer/models/Mistral-7B-v0.1/
+``` 
+
+This creates the file `Mistral-7B-v0.1/ggml-model-f16.gguf` which I can run with:
+
+```
+./server --threads 16 --parallel 1 --mlock -m ../TTT_Trainer/models/Mistral-7B-v0.1/ggml-model-f16.gguf
+```
+
+Then we can start the game UI.
+
+```
+python webUI/server.py 
+```
+
+If everything worked, then you can visit [4400](http://localhost:4400/index.html) and play the game!
+
+Kind of. So far this is just the base model. We need to add the LoRA generated from Phase 2.
+
 
 
 
