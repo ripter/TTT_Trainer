@@ -176,6 +176,7 @@ Last Play: ${this.lastMove[0]}, ${this.lastMove[1]}
   }
   
   logError(msg, raw) {
+    this._waiting = true; // Lock the state.
     this.gameLog += `
 ===[[ Error in Response ]]===
 ${msg}
@@ -186,68 +187,5 @@ ${raw}
     this.renderGameLog();
     this.renderStateError();
   }
-  
-  // Pretend to be an async endpoint responding.
-  // respondAsAsync(userMove) {
-  //   setTimeout(() => {
-  //     const response = RESPONSES[userMove];
-  //     const moveEvent = new CustomEvent('submit-move', {
-  //       detail: {
-  //         value: response,
-  //       }
-  //     });
-  //     this.dispatchEvent(moveEvent);
-  //   }, 1000 * (1 + Math.random()));
-  // }
-
 }
 customElements.define("app-ttt-game", App);
-
-
-
-
-
-const RESPONSES = {
-4: `
-Next Play: X
-Last Play: O, 6
-   |   |    
-   | X |    
- O |   |   
-`,
-0: `
-Next Play: X
-Last Play: O, 8
- X |   |    
-   | X |    
- O |   | O  
-`,
-7: `
-Next Play: X
-Last Play: O, 1
- X | O |    
-   | X |    
- O | X | O  
-`,
-8: `
-Next Play: X
-Last Play: X, 1
- X | O |    
-   | X |    
- O | X | O  
-`,
-6: `
-Next Play: X
-Last Play: O, 10
-   |   |    
-   | X |    
-   |   |   
-`,
-1: `
-Next Play: X
-Last Play: O, forfit
-   | X |    
-   |   |    
-   |   |   
-`,  
-}

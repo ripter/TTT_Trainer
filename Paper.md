@@ -143,7 +143,22 @@ The testing phase demonstrated that the player could engage in multiple interact
 
 ## Phase 3: Improved UI & Spot Training
 
-I created a webUI for the game that allows playing a model hosted by [llama.cpp's server](https://github.com/ggerganov/llama.cpp/tree/master/examples/server). The UI allows the user to play 
+I created a webUI for the game that allows playing a model hosted by [llama.cpp's server](https://github.com/ggerganov/llama.cpp/tree/master/examples/server). The UI allows the user to play the game with a click/tap interface and a log from the ML.
+
+By default it will run the webUI  on [4400](http://localhost:4400/index.html) and it will look for a llama.cpp compatable server at [8080](http://localhost:8080)
+
+
+```
+python webUI/server.py 
+```
+
+
+Before I can use a tool like [llama.cpp](https://github.com/ggerganov/llama.cpp) to host and run my custom model. I need to convert my model from `.safetensors` and `.nbz` files into a `.gguf` file.
+
+ 
+
+
+
 
 
 ```
