@@ -29,6 +29,12 @@ def get_health():
     response = requests.get(f'{args.external_api}/health')
     return (response.content, response.status_code, response.headers.items())
 
+
+@app.route('/api/completion', methods=['POST'])
+def post_completion():
+    response = requests.post(f'{args.external_api}/completion', json=request.json)
+    return (response.content, response.status_code, response.headers.items())
+
 # @app.route('/proxy/<path:endpoint>', methods=['GET', 'POST'])
 # def proxy_request(endpoint):
 #     print(f'Proxying request to {args.external_api}{endpoint}\nrequest.args: {request.args}\nrequest.json: {request.json}')

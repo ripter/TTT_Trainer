@@ -11,8 +11,32 @@ export async function requestMoveFromML(prompt) {
   // }
   // console.log('responseText', responseText);
 
-  const response = await fetch('api/health');
+  console.group('Health Check');
+  let response = await fetch('api/health');
   console.log('response', response);
-  const data = await response.json();
+  let data = await response.json();
   console.log('data', data);
+  console.groupEnd();
+
+  console.group('Request Move');
+  response = await fetch('api/completion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      prompt: prompt,
+      // temperature: 0.5,
+      // max_tokens: 800,
+      // top_p: 1,
+      // frequency_penalty: 0,
+      // presence_penalty: 0,
+    }),
+  });
+  console.log('response', response);
+  data = await response.json();
+  console.log('data', data);
+  console.groupEnd();
+
+  return data.content;
 }
