@@ -11,18 +11,7 @@ export async function requestMoveFromML(prompt) {
   // }
   // console.log('responseText', responseText);
 
-  const response = await fetch(`${baseUrl}/health`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      // 'Authorization': 'Bearer abc123',
-      // 'Sec-Fetch-Dest': 'empty',
-      // 'Sec-Fetch-Mode': 'cors',
-      // 'Sec-Fetch-Site': 'cross-site',
-      // 'Access-Control-Allow-Origin': 'http://localhost:4400/',
-      // 'Access-Control-Allow-Origin': '*',
-    },
-  });
+  const response = await fetch('api/health');
   console.log('response', response);
   const data = await response.json();
   console.log('data', data);
