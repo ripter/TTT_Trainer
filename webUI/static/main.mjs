@@ -70,7 +70,7 @@ class App extends HTMLElement {
   }
   renderStateError() {
     const elm = this.querySelector('.banner');
-    elm.innerText = 'Error';
+    elm.innerText = 'Llama Spit!';
     elm.style.display = 'block';
   }
   /* (re)render everything */

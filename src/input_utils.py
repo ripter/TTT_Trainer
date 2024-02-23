@@ -86,8 +86,13 @@ def convert_ai_response_to_move(ai_response: str):
   """
   ai_response_list = ai_response.split("\n") # Split the response into lines
   # Find the line that contains the last play
-  [(marker, ai_move)] = [parse_last_play(line) for line in ai_response_list if line.strip().startswith("Last Play:")]
+  last_play_lines = [parse_last_play(line) for line in ai_response_list if line.strip().startswith("Last Play:")]
+  if len(last_play_lines) == 0:
+    return (False, "The AI's response did not contain a 'Last Play' line.")
+  elif len(last_play_lines) > 1:
+    return (False, "The AI's response contained multiple 'Last Play' lines.")
 
+  [(marker, ai_move)] = last_play_lines
   if ai_move is None:
     return (False, "The AI's response was invalid.")
 

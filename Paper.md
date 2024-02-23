@@ -177,11 +177,42 @@ python webUI/server.py
 
 If everything worked, then you can visit [4400](http://localhost:4400/index.html) and play the game!
 
-Kind of. So far this is just the base model. We need to add the LoRA generated from Phase 2.
+The base model currently lacks the enhancements from the LoRA generated in Phases 1 & 2. To incorporate these improvements, we have two options:
+
+  1. Separate Integration: Maintain the LoRA as an independent file and configure the server to utilize both the base model and LoRA concurrently. This approach was employed in Phases 1 and 2.
+  2. Model Fusion: Merge the LoRA directly with the base model, thereby creating an amalgamated model. This method is exemplified by numerous models hosted on Hugging Face, resulting in a unified `.safetensor` file that operates seamlessly as a single model entity.
+    
+
+The llama.cpp library I am using perfers the fused model and even provides the script [export-lora](https://github.com/ggerganov/llama.cpp/tree/master/examples/export-lora) to create the fused model.
+
+```
+./export-lora \                                                                                                                                                                                         
+                     -m ~/dev/TTT_Trainer/models/Mistral-7B-v0.1/ggml-model-f16.gguf \
+                     -l ~/dev/TTT_Trainer/adapters.npz \
+                     -o models_gguf/ttt.gguf
+error: unexpected lora header file magic in '/Users/chrisrichards/dev/TTT_Trainer/adapters.npz'
+```
+
+Yeah, this doesn't work. I'm guessing it's because I didn't use llama.cpp to create the LoRA.
+
+Going back to our trusty MLX tools:
+
+```
+python -m mlx_lm.fuse \                                                                                                                                                                               
+                    --model models/Mistral-7B-v0.1/ \
+                    --adapter-file results/phase_2_adapters.npz \
+                    --save-path models/Mistral-7B-TTT/
+```
+
+This seems a little sus, becuase the result is only 14.49 GB while the original model is 73.47 GB. Trying to convert the model to GGUF throws an error, confirming my suspsion. 
 
 
 
 
+
+
+
+---
 
 
 ```
