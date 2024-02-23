@@ -48,6 +48,11 @@ def play_ai(model_path: Path, LoRA_path: Path = None):
 
     print(game_state)
 
+  if game_state.error_message:
+    result += f"\nError: {game_state.error_message}"
+    result += f"\n-----------------------------------"
+    result += f"\nLast AI Response: {ai_response}"
+
   print("\n=========\nGame Log:\n")
   print(result)
   return result
