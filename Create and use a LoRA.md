@@ -47,12 +47,13 @@ python -m mlx_lm.lora \
                          --train
 ```
 
-That creates the file `adapters.npz`. We can then test it using the same lora script.
+That creates the file `adapters.npz`.  (If you change the adapters filename, you can specifiy the new name with the `--adapter-file` argument.)
+
+To test the new LoRA, we can use the same `mlx_lm.lora` script, but instead of `--train` we pass in `--prompt`.
 
 ```
 python -m mlx_lm.lora \                                                                                                                                                                                 
                     --model models/Mistral-7B-v0.1/ \
-                    --adapter-file adapters.npz \
                     --max-tokens 35 \
                     --prompt "3TBot is playing TicTacToe with User.
                 3TBot is playing as O. User is playing as X.
@@ -74,27 +75,36 @@ python -m mlx_lm.lora \
                    |   |  "
 ```
 
-The results it generates *mostly* contains the part we require for the UI. "Last Play: O, 3". If the number of tokens it generates it too high, it will try to play again. Right now, I'm using a max tokens of 35 and that works well. There is some random characters appears in the response as well. But those can be ignored by the UI.
+The results it generates *mostly* contains the part we require for the UI. "Last Play: O, 3". If the number of tokens it generates it too high, it will try to play again. Right now, I'm using a max tokens of 35 and that works well. Sometimes random characters appears in the response, or the gameboard is missing position 8. But those can be ignored by the UI.
 
-Running the same command, but without the `--adapter-file adapters.npz \` allows us to compare the results with the LoRA and without. 
+This is a significant improvement over the base model.
 
-Using my human judgement for "Working" or not, here is a small smaple. We can see the LoRA give the correct response more often than the base model. While not captured here, it should be noted that most of the "bad data" in the LoRA version was because it missed a " | " at the end, or failed to place it's mark on the board. While the Base mode's "bad data" was mostly because it contained random text, characters, and other issues. This means that even the "bad" versions of the LoRA are closer to accurate than the base model's "bad" versions.
+* Base Model
+	* 0/ Entire response is correct. 
+	* 0/ Contains a correct "Last Play:" but has other bad data.
+	* 2/ Had "Last Play:" but picked an invalid move.
+	* 0/ Llama Spit! (Aka nothing is correct)
+* With LoRA 
+	* 7/20 Entire response is correct. 
+	* 13/20 Contains a correct "Last Play:" but has other bad data.
 
-* No LoRA
-	* 2/10 Entire response is correct. 
-	* 7/10 Contains a correct "Last Play:" but has other bad data.
-* With LoRA Phase 2
-	* 5/10 Entire response is correct. 
-	* 5/10 Contains a correct "Last Play:" but has other bad data.
 
+#### Fusing the model
 
+There is not a lot of support for text models running with a LoRA. (Although it is extrememly common for the image generation models.) So we need to create a new model the combines the base with our LoRA.
 
-For a sanity check, let's use a different script to test the base model.
+```
+python -m mlx_lm.fuse \                                                                                                                                                                               
+                    --model models/Mistral-7B-v0.1/
+```
+
+This creates our fused model at `lora_fused_model` by default.  So let's test this new model and see if we get the LoRA improvements.
 
 ```
 python -m mlx_lm.generate \                                                                                                                                                                            
-                    --model models/Mistral-7B-v0.1/ \
+                    --model lora_fused_model/ \
                     --max-tokens 35 \
+                    --seed (printf "%d" '0x'(openssl rand -hex 4)) \
                     --prompt "3TBot is playing TicTacToe with User.
                                 3TBot is playing as O. User is playing as X.
                                 Only play when it is your turn.
@@ -115,15 +125,10 @@ python -m mlx_lm.generate \
                                    |   |  "
 ```
 
-* Base Model
-	* 0/10 Entire response is correct. 
-	* 0/10 Contains a correct "Last Play:" but has other bad data.
-	* 10/10 Response is Llama Spit.
 
+* Fused Model
+	* 0/20 Entire response is correct. 
+	* 20/20 Contains a correct "Last Play:" but has other bad data.
+	* 0/20 Llama Spit! (Aka nothing is correct)
 
-Something fishy is going on.  Why does the `generate` script produce garbage every time, but the `lora` script, without a lora specified, does an ok job? My first thought is that the `lora` script is still using the lora, even if I don't specify it? Easy to check.
-
-```
-
-```
-
+I don't know why this provides different results than the Base + LoRA version, but it does.
