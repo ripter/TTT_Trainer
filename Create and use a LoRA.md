@@ -87,3 +87,43 @@ Using my human judgement for "Working" or not, here is a small smaple. We can se
 	* 5/10 Entire response is correct. 
 	* 5/10 Contains a correct "Last Play:" but has other bad data.
 
+
+
+For a sanity check, let's use a different script to test the base model.
+
+```
+python -m mlx_lm.generate \                                                                                                                                                                            
+                    --model models/Mistral-7B-v0.1/ \
+                    --max-tokens 35 \
+                    --prompt "3TBot is playing TicTacToe with User.
+                                3TBot is playing as O. User is playing as X.
+                                Only play when it is your turn.
+                                Update the gameboard with your move.
+                                Stop playing when someone wins.
+
+                                Next Play: X
+                                Last Play: None, None
+                                   |   |
+                                   |   |
+                                   |   |
+
+
+                                Next Play: O
+                                Last Play: X, 0
+                                 X |   |
+                                   |   |
+                                   |   |  "
+```
+
+* Base Model
+	* 0/10 Entire response is correct. 
+	* 0/10 Contains a correct "Last Play:" but has other bad data.
+	* 10/10 Response is Llama Spit.
+
+
+Something fishy is going on.  Why does the `generate` script produce garbage every time, but the `lora` script, without a lora specified, does an ok job? My first thought is that the `lora` script is still using the lora, even if I don't specify it? Easy to check.
+
+```
+
+```
+
