@@ -1,43 +1,87 @@
 import { requestMoveFromML } from './src/requestMoveFromML.mjs';
+import { getWinner } from './src/getWinner.mjs';
+
+const GAME_MODE = {
+  READY: 'READY',
+  WAITING: 'WAITING',
+  ERROR: 'ERROR',
+  X_WON: 'X_WON',
+  O_WON: 'O_WON',
+  TIE: 'TIE',
+};
 
 // App Component/Containter/Whatever
 // Everyone loves putting their webpage inside an App component these days.
 class App extends HTMLElement {
+  #_gameMode; // 'READY' | 'WAITING' | 'OVER' | 'ERROR'
+  set gameMode(val) {
+    if (Object.values(GAME_MODE).indexOf(val) === -1) {
+      throw new Error(`Invalid gameMode: \nRecived "${val}"\nExpected ${Object.values(GAME_MODE).join(' | ')}`);
+    }
+    this.#_gameMode = val;
+    this.renderGameMode(); 
+  }
+  get gameMode() {
+    return this.#_gameMode;
+  }
+
   constructor() {
     super();
     // Turn whatever text was inside the tags into the starting log. Eg. <app>prompt text</app>
     this.gameLog = this.innerText.replace(/\n+/g, '\n');
-    this.currentPlayer = 'X';
+    // Replace children with the game board.
     this.state = [0,0,0,0,0,0,0,0,0];
+    this._initInnerHTML();
+    this.currentPlayer = 'X';
+    // this.#_gameMode = 'READY';
     this.lastMove = ['None', 'None'];
-    this.innerHTML = `
-    <h2>Next Move: <span class="player-label">${this.currentPlayer}</span></h2>
-    <div class="gameboard">
-      <div class="banner">Waiting...</div>
-      ${this.state.map((cell, idx) => 
-                       `<div class="cell" data-idx="${idx}"></div>`).join('')}
-    </div>
-    <pre class="game-log">${this.gameLog}</pre>
-    `;
     
     // Start the Log with the empty board.
+    this.gameMode = GAME_MODE.READY;
     this.gameLog += this.toString();
     this.renderGameLog();
-    this.renderStateReady();
   }
   
   /* Add/Remove event listeners */
   connectedCallback() {
     this.addEventListener('click', this.handleClick);
-    this.addEventListener('submit-move', this.handleSubmitMove)
+    // this.addEventListener('submit-move', this.handleSubmitMove)
   }
   disconnectedCallback() {
     this.removeEventListener('click', this.handleClick);
-    this.removeEventListener('submit-move', this.handleSubmitMove);
+    // this.removeEventListener('submit-move', this.handleSubmitMove);
   }
   
+  _initInnerHTML() {
+    this.innerHTML = `
+    <h2>Next Move: <span class="player-label">${this.currentPlayer}</span></h2>
+    <div class="gameboard">
+      <div class="banner">Waiting...</div>
+      ${this.state.map((cell, idx) =>
+      `<div class="cell" data-idx="${idx}"></div>`).join('')}
+    </div>
+    <pre class="game-log">${this.gameLog}</pre>
+    `;
+  }
 
   
+  renderGameMode() {
+    const banner = this.querySelector('.banner');
+    switch (this.#_gameMode) {
+      case 'READY':
+        banner.style.display = 'none';
+        break;
+      case 'WAITING':
+        banner.innerText = 'Waiting...';
+        banner.style.display = 'block';
+        break;
+      case 'ERROR':
+        banner.innerText = 'Llama Spit!';
+        banner.style.display = 'block';
+        break;
+    }
+  }
+
   /* (re)renders the current player mark. */
   renderActivePlayer() {
     const elm = this.querySelector('.player-label');
@@ -58,62 +102,55 @@ class App extends HTMLElement {
     // Keep it scrolled to the bottom.
     elm.scroll(0, elm.scrollHeight);
   }
-  /* Render Waiting/Active State */
-  renderStateWaiting() {
-    const elm = this.querySelector('.banner');
-    elm.innerText = 'Waiting...';
-    elm.style.display = 'block';
-  }
-  renderStateReady() {
-    const elm = this.querySelector('.banner');
-    elm.style.display = 'none';
-  }
-  renderStateError() {
-    const elm = this.querySelector('.banner');
-    elm.innerText = 'Llama Spit!';
-    elm.style.display = 'block';
-  }
   /* (re)render everything */
   render() {
     this.renderGamestate()
     this.renderActivePlayer();
     this.renderGameLog();
   }
-  
-  
-  /* Click to play a move */
+
+
   async handleClick(evt) {
-    // Bail if we are waiting for a response.
-    if (this._waiting) { return; }
+    // Only handle clicks when the game is ready.
+    if (this.gameMode !== GAME_MODE.READY) { return; }
+
     const { target } = evt;
     // bail if the click was not on a cell.
     if (!target.classList.contains('cell')) { return; }
 
     // get the cell index.
     const idx = parseFloat(target.dataset.idx);
-    // Play the move
-    this.play(this.currentPlayer, idx);
-
-    // Show waiting while we wait for the response.
-    this._waiting = true;
-    this.renderStateWaiting(); // TODO: this should use _waiting to show the banner.
-    const mlResponse = await requestMoveFromML(this.gameLog);
-    // Trigger the ML response as an event.
-    // Did we need to respond as an event? No. But it's fun and still async.
-    const moveEvent = new CustomEvent('submit-move', {
-      detail: {
-        value: mlResponse,
-      }
-    });
-    this.dispatchEvent(moveEvent);
-    // All done!
-    this._waiting = false;
+    this.humanClickToPlay(idx); 
   }
   
-  /* API to play a move */
-  handleSubmitMove(evt) {
-    const { value = '' } = evt.detail;
-    const lines = value.split('\n');
+  
+  /*  
+   * Event Handlers
+   * The User Clicks a Cell to Play.
+  */
+  async humanClickToPlay(idx) {
+    // Play the move
+    this.play(this.currentPlayer, idx);
+    // Did the player win?
+    const winner = getWinner(this.state);
+    if (winner) {
+      this.gameLog += `Winner: ${winner}`;
+      this.gameMode = GAME_MODE.OVER;
+      return;
+    }
+
+    // Time for the AI to play.
+    // Show waiting while we wait for the response.
+    this.gameMode = GAME_MODE.WAITING;
+    // Request the AI to play a move. 
+    const mlResponse = await requestMoveFromML(this.gameLog);
+    // Process the AI's response.
+    this.aiClickToPlay(mlResponse);
+    this.gameMode = GAME_MODE.READY;
+  }
+
+  async aiClickToPlay(responseText) {
+    const lines = responseText.split('\n');
     const lineLastPlay = lines.filter(line => line.toLowerCase().startsWith("last play:"));
     if (lineLastPlay.length !== 1) {
       if (lineLastPlay.length > 1) {
@@ -133,15 +170,46 @@ class App extends HTMLElement {
         throw new Error(`Expected "${lastIdx}" to be a value be a number between 0-8`);
       }
       // Play the move
-      this.play(lastMark, lastIdx);
-      // Unlock the state.
-      this.renderStateReady();
+      return this.play(lastMark, lastIdx);
     }
     catch (err) {
       console.log('err', err);
       return this.logError(`Invalid Response.\n${err}`, lineLastPlay);
     }
   }
+  
+  /* API to play a move */
+  // handleSubmitMove(evt) {
+  //   const { value = '' } = evt.detail;
+  //   const lines = value.split('\n');
+  //   const lineLastPlay = lines.filter(line => line.toLowerCase().startsWith("last play:"));
+  //   if (lineLastPlay.length !== 1) {
+  //     if (lineLastPlay.length > 1) {
+  //       return this.logError(`Invalid Response.\nResponse containted more than one move.`, value);
+  //     }
+  //     return this.logError(`Invalid Response. No "Last Play:"`, value);
+  //   }
+  //   const lastPlay = lineLastPlay[0].split(':')[1].split(',');
+  //   const lastMark = lastPlay[0].trim();
+  //   if (lastMark !== this.currentPlayer) {
+  //     return this.logError(`Invalid Response.\nExpected "Last Play: ${this.currentPlayer}, ${lastPlay[1]}" `, lineLastPlay);
+  //   }
+  //   let lastIdx
+  //   try {
+  //     lastIdx = parseInt(lastPlay[1], 10);
+  //     if (isNaN(lastIdx) || lastIdx < 0 || lastIdx > 8) {
+  //       throw new Error(`Expected "${lastIdx}" to be a value be a number between 0-8`);
+  //     }
+  //     // Play the move
+  //     this.play(lastMark, lastIdx);
+  //     // Unlock the state.
+  //     this.renderStateReady();
+  //   }
+  //   catch (err) {
+  //     console.log('err', err);
+  //     return this.logError(`Invalid Response.\n${err}`, lineLastPlay);
+  //   }
+  // }
  
   
   // Returns the string version of the value at state[idx]
@@ -185,7 +253,6 @@ ${raw}
 ===[[ End ]]===
     `;
     this.renderGameLog();
-    this.renderStateError();
   }
 }
 customElements.define("app-ttt-game", App);
