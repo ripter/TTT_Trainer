@@ -132,3 +132,36 @@ python -m mlx_lm.generate \
 	* 0/20 Llama Spit! (Aka nothing is correct)
 
 I don't know why this provides different results than the Base + LoRA version, but it does.
+
+
+
+
+---
+
+Converting the fused model into a GGUF has been, challenging. The current versions (mlx==0.2.0, mlx-lm==0.0.13) appears to break something with the tokenizer files. In order to have llama.cpp's convert load the model. I replaced the tokenizer.* files in th lora_fused with the ones from the base model. This allowed llama.cpp to create the gguf file.
+
+nope, that didn't work. While it created the file, the modle gets stuck in and endless loop and never responds.
+
+
+**What Have I learned so far?**
+
+* Llama.cpp script errors when trying to convert a fused model to GGUF
+* Llama.cpp script works when trying to convert the base model.
+* If I copy the base model’s token files to the fuse model. The script works, but the model does not run properly.
+* The ‘save_gguf’ function from mlx doesn’t do much. It writes a list of arrays to a file with the GGUF extension. That’s it. Barely more than a native file write.
+* mlx library’s test for save_gguf only tests that it was able to write a 4x4 array of 1s to disk.
+* I searched GitHub. The only examples of using save_gguf all come from that test file. No one I’ve been able to talk to so far has used the function
+
+**Options**
+
+* I could try to quantize the fused model, then see if the llama.cpp convert script can handle that.
+* I can read up on the GGUF format and figure out how to save it in the right format.
+* Dig into llama.cpp’s convert script and see why it’s erroring. Use that to figure out a fix.
+
+
+I'm going to learn more about the GGUF format and see if I can fix my export script!
+
+**Head Desk**
+
+So I realise I've been chasing a problem I don't really have. I've been so focused on Llama.cpp because that is what I used on my really old hardware. That tool does everything in the CPU! I want to use my GPU! So even if I get the fuse model converted properly to a GGUF, I'll still be running thing on the CPU. In order to take full advantage of my hardware, I need to take the example server provided by MLX, and turn it into something I can use for this project. I did a google search to see if someone else did that already, but alias MLX is still very very new.
+
