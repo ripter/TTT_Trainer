@@ -1,7 +1,7 @@
 app-ttt-game {
   --cell-font-size: 56px;
   --cell-size: var(--cell-font-size);
-  --mark-font-family: fantasy;
+  --mark-font-family: Trattatello, fantasy;
 }
 
 app-ttt-game .gameboard {
@@ -21,6 +21,7 @@ app-ttt-game .gameboard .cell {
   justify-content: center;
   font-size: var(--cell-font-size);
   font-family: var(--mark-font-family);
+  line-height: 1em;
 }
 
 app-ttt-game .gameboard .banner {

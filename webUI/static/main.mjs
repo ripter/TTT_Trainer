@@ -13,7 +13,7 @@ const GAME_MODE = {
 // App Component/Containter/Whatever
 // Everyone loves putting their webpage inside an App component these days.
 class App extends HTMLElement {
-  #_gameMode; // 'READY' | 'WAITING' | 'OVER' | 'ERROR'
+  #_gameMode; // one of GAME_MODE
   set gameMode(val) {
     if (Object.values(GAME_MODE).indexOf(val) === -1) {
       throw new Error(`Invalid gameMode: \nRecived "${val}"\nExpected ${Object.values(GAME_MODE).join(' | ')}`);
@@ -31,8 +31,8 @@ class App extends HTMLElement {
     this.gameLog = this.innerText.replace(/\n+/g, '\n');
     // Replace children with the game board.
     this.state = [0,0,0,0,0,0,0,0,0];
-    this._initInnerHTML();
     this.currentPlayer = 'X';
+    this._initInnerHTML();
     // this.#_gameMode = 'READY';
     this.lastMove = ['None', 'None'];
     
@@ -77,6 +77,18 @@ class App extends HTMLElement {
         break;
       case 'ERROR':
         banner.innerText = 'Llama Spit!';
+        banner.style.display = 'block';
+        break;
+      case 'X_WON':
+        banner.innerText = 'X Wins!';
+        banner.style.display = 'block';
+        break;
+      case 'O_WON':
+        banner.innerText = 'O Wins!';
+        banner.style.display = 'block';
+        break;
+      case 'TIE':
+        banner.innerText = 'Tie Game!';
         banner.style.display = 'block';
         break;
     }
@@ -135,7 +147,13 @@ class App extends HTMLElement {
     const winner = getWinner(this.state);
     if (winner) {
       this.gameLog += `Winner: ${winner}`;
-      this.gameMode = GAME_MODE.OVER;
+      if (winner === 'X') {
+        this.gameMode = GAME_MODE.X_WON;
+      } else if (winner === 'O') {
+        this.gameMode = GAME_MODE.O_WON;
+      } else if (winner === 'T') {
+        this.gameMode = GAME_MODE.TIE;
+      }
       return;
     }
 
