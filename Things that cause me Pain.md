@@ -137,3 +137,9 @@ I'm going to learn more about the GGUF format and see if I can fix my export scr
 
 So I realise I've been chasing a problem I don't really have. I've been so focused on Llama.cpp because that is what I used on my really old hardware. That tool does everything in the CPU! I want to use my GPU! So even if I get the fuse model converted properly to a GGUF, I'll still be running thing on the CPU. In order to take full advantage of my hardware, I need to take the example server provided by MLX, and turn it into something I can use for this project. I did a google search to see if someone else did that already, but alias MLX is still very very new.
 
+
+
+---
+
+# Random
+

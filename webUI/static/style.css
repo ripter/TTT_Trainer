@@ -10,8 +10,8 @@ app-ttt-game .gameboard {
   grid-template-columns: repeat(3, var(--cell-size));
   position: relative;
   overflow: hidden;
-  width: calc(var(--cell-size) * 3);
-  height: calc(var(--cell-size) * 3);
+  width: calc((var(--cell-size) * 3) + 2px);
+  height: calc((var(--cell-size) * 3) + 2px);
 }
 
 app-ttt-game .gameboard .cell {
@@ -22,6 +22,8 @@ app-ttt-game .gameboard .cell {
   font-size: var(--cell-font-size);
   font-family: var(--mark-font-family);
   line-height: 1em;
+  height: var(--cell-size);
+  width: var(--cell-size);
 }
 
 app-ttt-game .gameboard .banner {
@@ -44,6 +46,7 @@ app-ttt-game .game-log {
   overflow: scroll;
   margin: 0;
   padding: 0.5em;
+  margin-left: 1.5em;
 }
 
 

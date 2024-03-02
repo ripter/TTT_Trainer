@@ -75,7 +75,7 @@ class App extends HTMLElement {
         banner.innerText = 'Waiting...';
         banner.style.display = 'block';
         break;
-      case 'ERROR':
+      case GAME_MODE.ERROR:
         banner.innerText = 'Llama Spit!';
         banner.style.display = 'block';
         break;
@@ -134,15 +134,12 @@ class App extends HTMLElement {
     const idx = parseFloat(target.dataset.idx);
     this.humanClickToPlay(idx); 
   }
-  
-  
-  /*  
-   * Event Handlers
-   * The User Clicks a Cell to Play.
-  */
-  async humanClickToPlay(idx) {
-    // Play the move
-    this.play(this.currentPlayer, idx);
+
+  // Checks for winner and updates the game mode.
+  async updateGameMode() {
+    // Bail if the game is not ready.
+    if ([GAME_MODE.READY, GAME_MODE.WAITING].indexOf(this.gameMode) === -1) { return; }
+
     // Did the player win?
     const winner = getWinner(this.state);
     if (winner) {
@@ -154,8 +151,26 @@ class App extends HTMLElement {
       } else if (winner === 'T') {
         this.gameMode = GAME_MODE.TIE;
       }
-      return;
+    } 
+    // If no winner, ready for the next move.
+    else {
+      this.gameMode = GAME_MODE.READY;
     }
+  }
+  
+  
+  /*  
+   * Event Handlers
+   * The User Clicks a Cell to Play.
+  */
+  async humanClickToPlay(idx) {
+    // Play the move
+    this.play(this.currentPlayer, idx);
+    // Update the game mode, and check for a winner.
+    await this.updateGameMode();
+
+    // Bail if the player won.
+    if (this.gameMode !== GAME_MODE.READY) { return; }
 
     // Time for the AI to play.
     // Show waiting while we wait for the response.
@@ -164,29 +179,40 @@ class App extends HTMLElement {
     const mlResponse = await requestMoveFromML(this.gameLog);
     // Process the AI's response.
     this.aiClickToPlay(mlResponse);
-    this.gameMode = GAME_MODE.READY;
+    // Update the game mode, and check for a winner.
+    await this.updateGameMode();
+    // this.gameMode = GAME_MODE.READY;
   }
 
   async aiClickToPlay(responseText) {
     const lines = responseText.split('\n');
     const lineLastPlay = lines.filter(line => line.toLowerCase().startsWith("last play:"));
+    //
+    // Check that we got a usable response.
     if (lineLastPlay.length !== 1) {
       if (lineLastPlay.length > 1) {
-        return this.logError(`Invalid Response.\nResponse containted more than one move.`, value);
+        return this.logError(`Invalid Response.\nResponse containted more than one move.`, lineLastPlay);
       }
-      return this.logError(`Invalid Response. No "Last Play:"`, value);
+      return this.logError(`Invalid Response. No "Last Play:"`, lineLastPlay);
     }
     const lastPlay = lineLastPlay[0].split(':')[1].split(',');
     const lastMark = lastPlay[0].trim();
     if (lastMark !== this.currentPlayer) {
       return this.logError(`Invalid Response.\nExpected "Last Play: ${this.currentPlayer}, ${lastPlay[1]}" `, lineLastPlay);
     }
+    //
+    // Attempt to get the index from the response.
     let lastIdx
     try {
       lastIdx = parseInt(lastPlay[1], 10);
       if (isNaN(lastIdx) || lastIdx < 0 || lastIdx > 8) {
-        throw new Error(`Expected "${lastIdx}" to be a value be a number between 0-8`);
+        return this.logError(`Expected "${lastIdx}" to be a value be a number between 0-8`, lineLastPlay);
       }
+      // Is the cell already taken?
+      if (this.state[lastIdx] !== 0) {
+        return this.logError(`Cell ${lastIdx} is already taken.`, lineLastPlay);
+      }
+
       // Play the move
       return this.play(lastMark, lastIdx);
     }
@@ -262,7 +288,7 @@ Last Play: ${this.lastMove[0]}, ${this.lastMove[1]}
   }
   
   logError(msg, raw) {
-    this._waiting = true; // Lock the state.
+    this.gameMode = GAME_MODE.ERROR;
     this.gameLog += `
 ===[[ Error in Response ]]===
 ${msg}
